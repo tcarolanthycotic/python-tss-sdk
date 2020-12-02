@@ -152,7 +152,7 @@ class SecretServer:
         return cls(**json.loads(obj))
 
     @classmethod
-    def _get_access_grant(cls, token_url, username, password):
+    def _get_access_grant(cls, token_url, username, password, domain):
         """Gets an *OAuth2 Access Grant* by calling the Secret Server REST API
         ``token`` endpoint
 
@@ -164,6 +164,7 @@ class SecretServer:
             data={
                 "username": username,
                 "password": password,
+                "domain": domain,
                 "grant_type": "password",
             },
         )
@@ -178,6 +179,7 @@ class SecretServer:
         base_url,
         username,
         password,
+        domain,
         api_path_uri=API_PATH_URI,
         token_path_uri=TOKEN_PATH_URI,
     ):
@@ -196,6 +198,7 @@ class SecretServer:
         self.base_url = base_url.rstrip("/")
         self.username = username
         self.password = password
+        self.domain = domain
         self.api_url = f"{base_url}/{api_path_uri.strip('/')}"
         self.token_url = f"{base_url}/{token_path_uri.strip('/')}"
 
@@ -215,7 +218,7 @@ class SecretServer:
             return
         else:
             self.access_grant = self._get_access_grant(
-                self.token_url, self.username, self.password
+                self.token_url, self.username, self.password, self.domain
             )
             self.access_grant_refreshed = datetime.now()
 
